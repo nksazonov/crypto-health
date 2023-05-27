@@ -1,0 +1,12 @@
+{
+  "name": "crypto-health",
+  "workspaces": [
+    "smart",
+    "website"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w website",
+    "start": "npm run start -w website",
+    "test:website": "npm run test -w website"
+  }
+}
