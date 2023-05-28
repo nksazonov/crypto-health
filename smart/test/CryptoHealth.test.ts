@@ -44,7 +44,7 @@ describe('CryptoHealth', () => {
     bloodType: 3,
   };
 
-  const getPatient = async (address: string): Promise<Patient> => {
+  const getAndParsePatient = async (address: string): Promise<Patient> => {
     const rawPatient = { ...(await TESTHealth.getPatientUnchecked(address)) };
     return {
       name: rawPatient.name,
@@ -82,7 +82,7 @@ describe('CryptoHealth', () => {
   describe('addPatient', () => {
     it('doctor can add patient', async () => {
       await HealthAsDoctor.addPatient(Patient1.address, Patient1Data);
-      expect(await getPatient(Patient1.address)).to.deep.equal(Patient1Data);
+      expect(await getAndParsePatient(Patient1.address)).to.deep.equal(Patient1Data);
     });
 
     it('revert on not doctor', async () => {
@@ -99,9 +99,55 @@ describe('CryptoHealth', () => {
     });
   });
 
-  // describe('updatePatient', () => {});
+  describe('updatePatient', () => {
+    it('doctor can update patient', async () => {
+      await HealthAsDoctor.addPatient(Patient1.address, Patient1Data);
+      await HealthAsDoctor.updatePatient(Patient1.address, Patient2Data);
+      expect(await getAndParsePatient(Patient1.address)).to.deep.equal(Patient2Data);
+    });
 
-  // describe('deletePatient', () => {});
+    it('revert on not doctor', async () => {
+      await expect(
+        HealthAsSomeone.updatePatient(Patient1.address, Patient1Data),
+      ).to.be.revertedWith(ACCOUNT_MISSING_ROLE(Someone.address, DOCTOR_ROLE));
+    });
+
+    it('revert on not added', async () => {
+      await expect(HealthAsDoctor.updatePatient(Patient1.address, Patient1Data)).to.be.revertedWith(
+        'patient does not exist',
+      );
+    });
+  });
+
+  describe('deletePatient', () => {
+    it('admin can delete patient', async () => {
+      await HealthAsDoctor.addPatient(Patient1.address, Patient1Data);
+      await HealthAsAdmin.deletePatient(Patient1.address);
+      await expect(TESTHealth.getPatient(Patient1.address)).to.be.revertedWith(
+        'patient does not exist',
+      );
+    });
+
+    it('revert on doctor', async () => {
+      await HealthAsDoctor.addPatient(Patient1.address, Patient1Data);
+      await expect(HealthAsDoctor.deletePatient(Patient1.address)).to.be.revertedWith(
+        ACCOUNT_MISSING_ROLE(Doctor.address, ADMIN_ROLE),
+      );
+    });
+
+    it('revert on not doctor or admin', async () => {
+      await HealthAsDoctor.addPatient(Patient1.address, Patient1Data);
+      await expect(HealthAsSomeone.deletePatient(Patient1.address)).to.be.revertedWith(
+        ACCOUNT_MISSING_ROLE(Someone.address, ADMIN_ROLE),
+      );
+    });
+
+    it('revert on not added', async () => {
+      await expect(HealthAsAdmin.deletePatient(Patient1.address)).to.be.revertedWith(
+        'patient does not exist',
+      );
+    });
+  });
 
   // describe('addDiagnosisRecord', () => {});
 
