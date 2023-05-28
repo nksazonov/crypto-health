@@ -91,7 +91,8 @@ contract CryptoHealth is IHealth, AccessControl {
 		address patient,
 		uint16 diagnosisCode,
 		bool isDiagnosisActive
-	) external override {
+	) external override onlyRole(DOCTOR_ROLE) {
+		_requirePatientExists(patient);
 		_diagnosesHistory[patient].push(
 			Diagnosis(diagnosisCode, isDiagnosisActive, uint64(block.timestamp), msg.sender)
 		);
