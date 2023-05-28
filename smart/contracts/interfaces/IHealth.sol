@@ -36,10 +36,7 @@ interface IHealth {
 
 	// ============ Getters ============
 
-	function getPatient(
-		address patient,
-		bytes calldata signature
-	) external view returns (Patient memory);
+	function getPatient(address patient) external view returns (Patient memory);
 
 	function getDiagnosesHistory(address patient) external view returns (Diagnosis[] memory);
 
@@ -47,9 +44,9 @@ interface IHealth {
 
 	// ============ Modifying Functions ============
 
-	function addPatient(Patient calldata patient) external;
+	function addPatient(address address_, Patient calldata patient) external;
 
-	function updatePatient(Patient calldata patient) external;
+	function updatePatient(address address_, Patient calldata patient) external;
 
 	function deletePatient(address patient) external;
 

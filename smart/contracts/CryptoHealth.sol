@@ -13,11 +13,11 @@ contract CryptoHealth is IHealth, AccessControl {
 
 	// ============ Storage ============
 
-	mapping(address => Patient) private _patients;
+	mapping(address => Patient) internal _patients;
 
-	mapping(address => Diagnosis[]) private _diagnosesHistory;
+	mapping(address => Diagnosis[]) internal _diagnosesHistory;
 
-	mapping(address => uint16[]) private _activeDiagnoses;
+	mapping(address => uint16[]) internal _activeDiagnoses;
 
 	// ============ Constructor ============
 
@@ -26,42 +26,54 @@ contract CryptoHealth is IHealth, AccessControl {
 		_setupRole(DOCTOR_ROLE, msg.sender);
 	}
 
+	// ============ Modifiers ============
+
+	modifier onlyDoctorOrPatient(address patient) {
+		require(hasRole(DOCTOR_ROLE, msg.sender) || msg.sender == patient, 'access denied');
+		_;
+	}
+
 	// ============ Getters ============
 
 	function getPatient(
-		address patient,
-		bytes calldata signature
-	) external view override returns (Patient memory) {
-		require(
-			SignatureChecker.isValidSignatureNow(patient, keccak256(signature), signature),
-			'invalid patient signature'
-		);
-
+		address patient
+	) external view override onlyDoctorOrPatient(patient) returns (Patient memory) {
 		return _patients[patient];
 	}
 
 	function getDiagnosesHistory(
 		address patient
-	) external view override returns (Diagnosis[] memory) {
+	) external view override onlyDoctorOrPatient(patient) returns (Diagnosis[] memory) {
 		return _diagnosesHistory[patient];
 	}
 
-	function getActiveDiagnoses(address patient) external view override returns (uint16[] memory) {
+	function getActiveDiagnoses(
+		address patient
+	) external view override onlyDoctorOrPatient(patient) returns (uint16[] memory) {
 		return _activeDiagnoses[patient];
 	}
 
 	// ============ Modifying Functions ============
 
-	function addPatient(Patient calldata patient) external override onlyRole(DOCTOR_ROLE) {
-		_patients[msg.sender] = patient;
+	function addPatient(
+		address address_,
+		Patient calldata patient
+	) external override onlyRole(DOCTOR_ROLE) {
+		require(_isEmptyPatient(_patients[address_]), 'patient already exists');
+		_requireCorrectPatient(patient);
+		_patients[address_] = patient;
 
-		emit PatientAdded(msg.sender, patient.name, patient.surname, patient.birthDate);
+		emit PatientAdded(address_, patient.name, patient.surname, patient.birthDate);
 	}
 
-	function updatePatient(Patient calldata patient) external override onlyRole(DOCTOR_ROLE) {
-		_patients[msg.sender] = patient;
+	function updatePatient(
+		address address_,
+		Patient calldata patient
+	) external override onlyRole(DOCTOR_ROLE) {
+		_requireCorrectPatient(patient);
+		_patients[address_] = patient;
 
-		emit PatientUpdated(msg.sender, patient.name, patient.surname, patient.birthDate);
+		emit PatientUpdated(address_, patient.name, patient.surname, patient.birthDate);
 	}
 
 	function deletePatient(address patient) external override onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -80,6 +92,26 @@ contract CryptoHealth is IHealth, AccessControl {
 		);
 
 		_toggleActiveDiagnosis(patient, diagnosisCode, isDiagnosisActive);
+	}
+
+	// ============ Internal Functions ============
+
+	function _isEmptyPatient(Patient memory patient) internal pure returns (bool) {
+		return
+			bytes(patient.name).length == 0 &&
+			bytes(patient.surname).length == 0 &&
+			patient.birthDate == 0 &&
+			patient.height == 0 &&
+			patient.weight == 0 &&
+			patient.bloodType == 0;
+	}
+
+	function _requireCorrectPatient(Patient memory patient) internal view {
+		require(bytes(patient.name).length > 0, 'name is empty');
+		require(bytes(patient.surname).length > 0, 'surname is empty');
+		require(patient.birthDate < block.timestamp, 'birthDate is in the future');
+		require(patient.height > 0, 'height is zero');
+		require(patient.weight > 0, 'weight is zero');
 	}
 
 	function _toggleActiveDiagnosis(address patient, uint16 diagnosisCode, bool isActive) internal {
