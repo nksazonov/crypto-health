@@ -6,3 +6,10 @@ export interface Patient {
   weight: number;
   bloodType: number;
 }
+
+export interface Diagnosis {
+  code: number;
+  isActive: boolean;
+  date: number;
+  doctor: string;
+}
