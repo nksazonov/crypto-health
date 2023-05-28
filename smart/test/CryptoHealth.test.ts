@@ -444,5 +444,60 @@ describe('CryptoHealth', () => {
     });
   });
 
-  // describe('getActiveDiagnoses', () => {});
+  describe('getActiveDiagnoses', () => {
+    it('success on called by this patient', async () => {
+      await HealthAsDoctor.addPatient(Patient1.address, Patient1Data);
+      expect(await TESTHealth.getActiveDiagnoses(Patient1.address)).to.deep.equal([]);
+    });
+
+    it('success on called by doctor', async () => {
+      await HealthAsDoctor.addPatient(Patient1.address, Patient1Data);
+      expect(await TESTHealth.getActiveDiagnoses(Patient1.address)).to.deep.equal([]);
+    });
+
+    it('revert on not doctor or patient', async () => {
+      await expect(HealthAsSomeone.getActiveDiagnoses(Patient1.address)).to.be.revertedWith(
+        'access denied',
+      );
+    });
+
+    it('revert when patient does not exist', async () => {
+      await expect(TESTHealth.getActiveDiagnoses(Patient1.address)).to.be.revertedWith(
+        'patient does not exist',
+      );
+    });
+
+    it('return empty array on no active diagnoses', async () => {
+      await HealthAsDoctor.addPatient(Patient1.address, Patient1Data);
+      expect(await TESTHealth.getActiveDiagnoses(Patient1.address)).to.deep.equal([]);
+    });
+
+    it('return array of active diagnoses', async () => {
+      await HealthAsDoctor.addPatient(Patient1.address, Patient1Data);
+      await HealthAsDoctor.addDiagnosisRecord(Patient1.address, Diagnosis1Data.code, true);
+      await HealthAsDoctor.addDiagnosisRecord(Patient1.address, Diagnosis2Data.code, true);
+
+      expect(await TESTHealth.getActiveDiagnoses(Patient1.address)).to.deep.equal([
+        Diagnosis1Data.code,
+        Diagnosis2Data.code,
+      ]);
+    });
+
+    it('update array of active diagnoses after toggling', async () => {
+      await HealthAsDoctor.addPatient(Patient1.address, Patient1Data);
+      await HealthAsDoctor.addDiagnosisRecord(Patient1.address, Diagnosis1Data.code, true);
+      await HealthAsDoctor.addDiagnosisRecord(Patient1.address, Diagnosis2Data.code, true);
+
+      expect(await TESTHealth.getActiveDiagnoses(Patient1.address)).to.deep.equal([
+        Diagnosis1Data.code,
+        Diagnosis2Data.code,
+      ]);
+
+      await HealthAsDoctor.addDiagnosisRecord(Patient1.address, Diagnosis1Data.code, false);
+
+      expect(await TESTHealth.getActiveDiagnoses(Patient1.address)).to.deep.equal([
+        Diagnosis2Data.code,
+      ]);
+    });
+  });
 });
