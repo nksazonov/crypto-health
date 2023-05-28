@@ -70,16 +70,18 @@ contract CryptoHealth is IHealth, AccessControl {
 		address address_,
 		Patient calldata patient
 	) external override onlyRole(DOCTOR_ROLE) {
+		require(!_isEmptyPatient(_patients[address_]), 'patient does not exist');
 		_requireCorrectPatient(patient);
 		_patients[address_] = patient;
 
 		emit PatientUpdated(address_, patient.name, patient.surname, patient.birthDate);
 	}
 
-	function deletePatient(address patient) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-		delete _patients[patient];
+	function deletePatient(address address_) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+		require(!_isEmptyPatient(_patients[address_]), 'patient does not exist');
+		delete _patients[address_];
 
-		emit PatientDeleted(patient);
+		emit PatientDeleted(address_);
 	}
 
 	function addDiagnosisRecord(
