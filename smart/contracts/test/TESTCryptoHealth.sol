@@ -31,7 +31,7 @@ contract TESTCryptoHealth is CryptoHealth {
 		_requireCorrectPatient(patient);
 	}
 
-	function toggleActiveDiagnosis(address patient, uint16 diagnosisCode, bool isActive) internal {
+	function toggleActiveDiagnosis(address patient, uint16 diagnosisCode, bool isActive) external {
 		_toggleActiveDiagnosis(patient, diagnosisCode, isActive);
 	}
 }
