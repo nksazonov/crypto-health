@@ -10,7 +10,7 @@ import { ACCOUNT_MISSING_ROLE } from './common';
 
 import type { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import type { IHealth, TESTCryptoHealth } from '../typechain-types';
-import type { Diagnosis, Patient } from './types';
+import type { Patient } from './types';
 
 const ADMIN_ROLE = constants.HashZero;
 const DOCTOR_ROLE = utils.id('DOCTOR_ROLE');
@@ -25,7 +25,6 @@ describe('CryptoHealth', () => {
   let TESTHealth: TESTCryptoHealth;
   let HealthAsSomeone: TESTCryptoHealth;
   let HealthAsPatient1: TESTCryptoHealth;
-  let HealthAsPatient2: TESTCryptoHealth;
   let HealthAsDoctor: TESTCryptoHealth;
   let HealthAsAdmin: TESTCryptoHealth;
 
