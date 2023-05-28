@@ -354,7 +354,22 @@ describe('CryptoHealth', () => {
     });
   });
 
-  // describe('_toggleActiveDiagnosis', () => {});
+  describe('_toggleActiveDiagnosis', () => {
+    it('adds diagnosis to active when isActive is true', async () => {
+      await HealthAsDoctor.addPatient(Patient1.address, Patient1Data);
+      await TESTHealth.toggleActiveDiagnosis(Patient1.address, Diagnosis1Data.code, true);
+      expect(await TESTHealth.getActiveDiagnoses(Patient1.address)).to.deep.equal([
+        Diagnosis1Data.code,
+      ]);
+    });
+
+    it('removes diagnosis from active when isActive is false', async () => {
+      await HealthAsDoctor.addPatient(Patient1.address, Patient1Data);
+      await TESTHealth.toggleActiveDiagnosis(Patient1.address, Diagnosis1Data.code, true);
+      await TESTHealth.toggleActiveDiagnosis(Patient1.address, Diagnosis1Data.code, false);
+      expect(await TESTHealth.getActiveDiagnoses(Patient1.address)).to.deep.equal([]);
+    });
+  });
 
   // describe('getPatient', () => {
   //   it('success on called by this patient');
