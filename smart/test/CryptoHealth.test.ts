@@ -308,7 +308,51 @@ describe('CryptoHealth', () => {
     });
   });
 
-  // describe('_requireCorrectPatient', () => {});
+  describe('_requireCorrectPatient', () => {
+    const correctPatient = {
+      ...Patient1Data,
+    };
+
+    it('not revert when patient is correct', async () => {
+      await TESTHealth.requireCorrectPatient(correctPatient);
+    });
+
+    it('revert when patient name is empty', async () => {
+      const patientWithoutName = { ...correctPatient, name: '' };
+      await expect(TESTHealth.requireCorrectPatient(patientWithoutName)).to.be.revertedWith(
+        'name is empty',
+      );
+    });
+
+    it('revert when patient surname is empty', async () => {
+      const patientWithoutSurname = { ...correctPatient, surname: '' };
+      await expect(TESTHealth.requireCorrectPatient(patientWithoutSurname)).to.be.revertedWith(
+        'surname is empty',
+      );
+    });
+
+    it('revert when patient birthDate is in future', async () => {
+      const future = (await latest()) + 42;
+      const patientWithoutBirthDate = { ...correctPatient, birthDate: future };
+      await expect(TESTHealth.requireCorrectPatient(patientWithoutBirthDate)).to.be.revertedWith(
+        'birthDate is in the future',
+      );
+    });
+
+    it('revert when patient height is zero', async () => {
+      const patientWithoutHeight = { ...correctPatient, height: 0 };
+      await expect(TESTHealth.requireCorrectPatient(patientWithoutHeight)).to.be.revertedWith(
+        'height is zero',
+      );
+    });
+
+    it('revert when patient weight is zero', async () => {
+      const patientWithoutWeight = { ...correctPatient, weight: 0 };
+      await expect(TESTHealth.requireCorrectPatient(patientWithoutWeight)).to.be.revertedWith(
+        'weight is zero',
+      );
+    });
+  });
 
   // describe('_toggleActiveDiagnosis', () => {});
 
