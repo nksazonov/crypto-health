@@ -38,18 +38,21 @@ contract CryptoHealth is IHealth, AccessControl {
 	function getPatient(
 		address patient
 	) external view override onlyDoctorOrPatient(patient) returns (Patient memory) {
+		_requirePatientExists(patient);
 		return _patients[patient];
 	}
 
 	function getDiagnosesHistory(
 		address patient
 	) external view override onlyDoctorOrPatient(patient) returns (Diagnosis[] memory) {
+		_requirePatientExists(patient);
 		return _diagnosesHistory[patient];
 	}
 
 	function getActiveDiagnoses(
 		address patient
 	) external view override onlyDoctorOrPatient(patient) returns (uint16[] memory) {
+		_requirePatientExists(patient);
 		return _activeDiagnoses[patient];
 	}
 
@@ -59,7 +62,7 @@ contract CryptoHealth is IHealth, AccessControl {
 		address address_,
 		Patient calldata patient
 	) external override onlyRole(DOCTOR_ROLE) {
-		require(_isEmptyPatient(_patients[address_]), 'patient already exists');
+		_requirePatientDoesNotExist(address_);
 		_requireCorrectPatient(patient);
 		_patients[address_] = patient;
 
@@ -70,7 +73,7 @@ contract CryptoHealth is IHealth, AccessControl {
 		address address_,
 		Patient calldata patient
 	) external override onlyRole(DOCTOR_ROLE) {
-		require(!_isEmptyPatient(_patients[address_]), 'patient does not exist');
+		_requirePatientExists(address_);
 		_requireCorrectPatient(patient);
 		_patients[address_] = patient;
 
@@ -78,7 +81,7 @@ contract CryptoHealth is IHealth, AccessControl {
 	}
 
 	function deletePatient(address address_) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-		require(!_isEmptyPatient(_patients[address_]), 'patient does not exist');
+		_requirePatientExists(address_);
 		delete _patients[address_];
 
 		emit PatientDeleted(address_);
@@ -97,6 +100,14 @@ contract CryptoHealth is IHealth, AccessControl {
 	}
 
 	// ============ Internal Functions ============
+
+	function _requirePatientExists(address patient) internal view {
+		require(!_isEmptyPatient(_patients[patient]), 'patient does not exist');
+	}
+
+	function _requirePatientDoesNotExist(address patient) internal view {
+		require(_isEmptyPatient(_patients[patient]), 'patient already exists');
+	}
 
 	function _isEmptyPatient(Patient memory patient) internal pure returns (bool) {
 		return
