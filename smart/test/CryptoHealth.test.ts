@@ -397,7 +397,52 @@ describe('CryptoHealth', () => {
     });
   });
 
-  // describe('getDiagnosesHistory', () => {});
+  describe('getDiagnosesHistory', () => {
+    it('success on called by this patient', async () => {
+      await HealthAsDoctor.addPatient(Patient1.address, Patient1Data);
+      expect(await TESTHealth.getDiagnosesHistory(Patient1.address)).to.deep.equal([]);
+    });
+
+    it('success on called by doctor', async () => {
+      await HealthAsDoctor.addPatient(Patient1.address, Patient1Data);
+      expect(await TESTHealth.getDiagnosesHistory(Patient1.address)).to.deep.equal([]);
+    });
+
+    it('revert on not doctor or patient', async () => {
+      await expect(HealthAsSomeone.getDiagnosesHistory(Patient1.address)).to.be.revertedWith(
+        'access denied',
+      );
+    });
+
+    it('return empty array on no diagnoses', async () => {
+      await HealthAsDoctor.addPatient(Patient1.address, Patient1Data);
+      expect(await TESTHealth.getDiagnosesHistory(Patient1.address)).to.deep.equal([]);
+    });
+
+    it('return array of diagnoses', async () => {
+      await HealthAsDoctor.addPatient(Patient1.address, Patient1Data);
+      await HealthAsDoctor.addDiagnosisRecord(Patient1.address, Diagnosis1Data.code, true);
+      await HealthAsDoctor.addDiagnosisRecord(Patient1.address, Diagnosis2Data.code, true);
+
+      const diagnosesRaw = await TESTHealth.getDiagnosesHistory(Patient1.address);
+      const [code1, isActive1, , doctor1] = [...diagnosesRaw[0]];
+      const [code2, isActive2, , doctor2] = [...diagnosesRaw[1]];
+
+      expect(code1).to.equal(Diagnosis1Data.code);
+      expect(isActive1).to.equal(Diagnosis1Data.isActive);
+      expect(doctor1).to.equal(Diagnosis1Data.doctor);
+
+      expect(code2).to.equal(Diagnosis2Data.code);
+      expect(isActive2).to.equal(Diagnosis2Data.isActive);
+      expect(doctor2).to.equal(Diagnosis2Data.doctor);
+    });
+
+    it('revert when patient does not exist', async () => {
+      await expect(TESTHealth.getDiagnosesHistory(Patient1.address)).to.be.revertedWith(
+        'patient does not exist',
+      );
+    });
+  });
 
   // describe('getActiveDiagnoses', () => {});
 });
