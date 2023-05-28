@@ -6,9 +6,10 @@ import {
   setNextBlockTimestamp,
 } from '@nomicfoundation/hardhat-network-helpers/dist/src/helpers/time';
 
-import type { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
-import type { CryptoHealth, TESTCryptoHealth } from '../typechain-types';
 import { ACCOUNT_MISSING_ROLE } from './common';
+
+import type { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
+import type { IHealth, TESTCryptoHealth } from '../typechain-types';
 import type { Diagnosis, Patient } from './types';
 
 const ADMIN_ROLE = constants.HashZero;
@@ -64,8 +65,7 @@ describe('CryptoHealth', () => {
     doctor: '0x',
   };
 
-  const getAndParsePatient = async (address: string): Promise<Patient> => {
-    const rawPatient = { ...(await TESTHealth.getPatientUnchecked(address)) };
+  const parsePatient = (rawPatient: IHealth.PatientStructOutput): Patient => {
     return {
       name: rawPatient.name,
       surname: rawPatient.surname,
@@ -76,14 +76,9 @@ describe('CryptoHealth', () => {
     };
   };
 
-  const getAndParseDiagnosis = async (address: string, index: number): Promise<Diagnosis> => {
-    const rawDiagnosis = { ...(await TESTHealth.getDiagnosisUnchecked(address, index)) };
-    return {
-      code: rawDiagnosis.code,
-      isActive: rawDiagnosis.isActive,
-      date: rawDiagnosis.date.toNumber(),
-      doctor: rawDiagnosis.doctor,
-    };
+  const getAndParsePatient = async (address: string): Promise<Patient> => {
+    const rawPatient = { ...(await TESTHealth.getPatientUnchecked(address)) };
+    return parsePatient(rawPatient);
   };
 
   before(async () => {
@@ -101,6 +96,7 @@ describe('CryptoHealth', () => {
     await TESTHealth.grantRole(DOCTOR_ROLE, Doctor.address);
 
     HealthAsSomeone = TESTHealth.connect(Someone);
+    HealthAsPatient1 = TESTHealth.connect(Patient1);
     HealthAsDoctor = TESTHealth.connect(Doctor);
     HealthAsAdmin = TESTHealth.connect(Admin);
   });
@@ -371,13 +367,35 @@ describe('CryptoHealth', () => {
     });
   });
 
-  // describe('getPatient', () => {
-  //   it('success on called by this patient');
+  describe('getPatient', () => {
+    beforeEach(async () => {
+      await HealthAsDoctor.addPatient(Patient1.address, Patient1Data);
+    });
 
-  //   it('success on called by doctor');
+    it('success on called by this patient', async () => {
+      expect(parsePatient(await HealthAsPatient1.getPatient(Patient1.address))).to.deep.equal(
+        Patient1Data,
+      );
+    });
 
-  //   it('revert on not doctor or patient');
-  // });
+    it('success on called by doctor', async () => {
+      expect(parsePatient(await HealthAsDoctor.getPatient(Patient1.address))).to.deep.equal(
+        Patient1Data,
+      );
+    });
+
+    it('revert on not doctor or patient', async () => {
+      await expect(HealthAsSomeone.getPatient(Patient1.address)).to.be.revertedWith(
+        'access denied',
+      );
+    });
+
+    it('revert when patient does not exist', async () => {
+      await expect(TESTHealth.getPatient(Patient2.address)).to.be.revertedWith(
+        'patient does not exist',
+      );
+    });
+  });
 
   // describe('getDiagnosesHistory', () => {});
 
