@@ -242,11 +242,71 @@ describe('CryptoHealth', () => {
     });
   });
 
-  // describe('_requirePatientExists', () => {});
+  describe('_requirePatientExists', () => {
+    it('not revert when patient exists', async () => {
+      await HealthAsDoctor.addPatient(Patient1.address, Patient1Data);
+      await TESTHealth.requirePatientExists(Patient1.address);
+    });
 
-  // describe('_requirePatientDoesNotExist', () => {});
+    it('revert when patient does not exist', async () => {
+      await expect(TESTHealth.requirePatientExists(Patient1.address)).to.be.revertedWith(
+        'patient does not exist',
+      );
+    });
+  });
 
-  // describe('_isEmptyPatient', () => {});
+  describe('_requirePatientDoesNotExist', () => {
+    it('not revert when patient does not exist', async () => {
+      await TESTHealth.requirePatientDoesNotExist(Patient1.address);
+    });
+
+    it('revert when patient exists', async () => {
+      await HealthAsDoctor.addPatient(Patient1.address, Patient1Data);
+      await expect(TESTHealth.requirePatientDoesNotExist(Patient1.address)).to.be.revertedWith(
+        'patient already exists',
+      );
+    });
+  });
+
+  describe('_isEmptyPatient', () => {
+    const emptyPatient = {
+      name: '',
+      surname: '',
+      birthDate: 0,
+      height: 0,
+      weight: 0,
+      bloodType: 0,
+    };
+
+    it('returns true on empty patient', async () => {
+      expect(await TESTHealth.isEmptyPatient(emptyPatient)).to.be.true;
+    });
+
+    it('returns false on patient with name', async () => {
+      const patientWithName = { ...emptyPatient, name: 'name' };
+      expect(await TESTHealth.isEmptyPatient(patientWithName)).to.be.false;
+    });
+
+    it('returns false on patient with surname', async () => {
+      const patientWithSurname = { ...emptyPatient, surname: 'surname' };
+      expect(await TESTHealth.isEmptyPatient(patientWithSurname)).to.be.false;
+    });
+
+    it('returns false on patient with birthDate', async () => {
+      const patientWithBirthDate = { ...emptyPatient, birthDate: 1 };
+      expect(await TESTHealth.isEmptyPatient(patientWithBirthDate)).to.be.false;
+    });
+
+    it('returns false on patient with height', async () => {
+      const patientWithHeight = { ...emptyPatient, height: 140 };
+      expect(await TESTHealth.isEmptyPatient(patientWithHeight)).to.be.false;
+    });
+
+    it('returns false on patient with weight', async () => {
+      const patientWithWeight = { ...emptyPatient, weight: 40 };
+      expect(await TESTHealth.isEmptyPatient(patientWithWeight)).to.be.false;
+    });
+  });
 
   // describe('_requireCorrectPatient', () => {});
 
