@@ -7,3 +7,7 @@ export function bloodTypeToText(bloodType: number): string {
 export function diagnosisIdToText(diagnosisId: number): string {
   return DiagnosisMap.get(diagnosisId) || "Unknown";
 }
+
+export function diagnosisStatusToText(isActive: boolean): string {
+  return isActive ? "active" : "cured";
+}
