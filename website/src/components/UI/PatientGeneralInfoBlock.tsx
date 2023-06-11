@@ -9,7 +9,7 @@ interface Props {
 function PatientGeneralInfoBlock({ patient, className }: Props) {
   return (
     <div className={`bg-blue-light px-14 py-10 ${className || ''}`}>
-      <h2 className="text-4xl mb-10 text-center">General information</h2>
+      <h2 className="text-4xl mb-16 text-center">General information</h2>
       <div className="grid grid-cols-2 grid-rows-6 gap-x-12 gap-y-6 text-3xl">
         <span>Name:</span> <span>{patient.name}</span>
         <span>Surname:</span> <span>{patient.surname}</span>
