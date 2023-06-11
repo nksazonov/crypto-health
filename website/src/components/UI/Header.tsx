@@ -9,7 +9,7 @@ interface Props {
 
 function Header({ text, address, addressHref }: Props) {
   return (
-    <div className="flex flex-row w-100 items-center justify-between px-36 py-12 bg-blue">
+    <div className="flex flex-row w-100 items-center justify-between px-36 py-12 h-1/6 bg-blue">
       <span className="text-4xl font-semibold font-['PT_Mono'] text-white">CryptoHealth</span>
       <div className='text-xl text-white'>
         <span>{text}</span>
