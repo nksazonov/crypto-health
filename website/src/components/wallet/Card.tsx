@@ -1,7 +1,7 @@
 import type { Web3ReactHooks } from '@web3-react/core'
 import type { MetaMask } from '@web3-react/metamask'
 
-import { getName } from '../connectors/utils'
+import { getName } from '../../connectors/utils'
 import { Accounts } from './Accounts'
 import { Chain } from './Chain'
 import { ConnectWithSelect } from './ConnectWithSelect'
