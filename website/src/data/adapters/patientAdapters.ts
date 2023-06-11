@@ -1,6 +1,6 @@
 import { BloodTypesMap, DiagnosisMap } from "../maps";
 
-export function dateToAge(date: number): number {
+export function timestampToAge(date: number): number {
   return Math.floor((Date.now() / 1000 - date) / 60 / 60 / 24 / 365);
 }
 

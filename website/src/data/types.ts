@@ -1,7 +1,7 @@
 export interface PatientGeneralInfo {
   name: string;
   surname: string;
-  birthDate: number;
+  birthTimestamp: number;
   height: number;
   weight: number;
   bloodType: number;
@@ -9,7 +9,7 @@ export interface PatientGeneralInfo {
 
 export interface Diagnosis {
   id: number;
-  date: number;
+  timestamp: number;
   isActive: boolean;
   diagnosedBy: string;
 }

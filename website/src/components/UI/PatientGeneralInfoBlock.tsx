@@ -1,4 +1,4 @@
-import { bloodTypeToText, dateToAge } from "../../data/adapters/patientAdapters";
+import { bloodTypeToText, timestampToAge } from "../../data/adapters/patientAdapters";
 import { PatientGeneralInfo } from "../../data/types";
 
 interface Props {
@@ -13,7 +13,7 @@ function PatientGeneralInfoBlock({ patient, className }: Props) {
       <div className="grid grid-cols-2 grid-rows-6 gap-x-12 gap-y-6 text-3xl">
         <span>Name:</span> <span>{patient.name}</span>
         <span>Surname:</span> <span>{patient.surname}</span>
-        <span>Age</span> <span>{dateToAge(patient.birthDate)} years</span>
+        <span>Age</span> <span>{timestampToAge(patient.birthTimestamp)} years</span>
         <span>Height:</span> <span>{patient.height} cm</span>
         <span>Weight:</span> <span>{patient.weight} kg</span>
         <span>Blood type:</span> <span>{bloodTypeToText(patient.bloodType)}</span>
