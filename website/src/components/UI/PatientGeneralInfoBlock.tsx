@@ -1,4 +1,5 @@
-import { bloodTypeToText, timestampToAge } from "../../data/adapters/patientAdapters";
+import { bloodTypeToText } from "../../data/adapters/patientAdapters";
+import { timestampToAge } from "../../data/adapters/timeAdapters";
 import { PatientGeneralInfo } from "../../data/types";
 
 interface Props {
