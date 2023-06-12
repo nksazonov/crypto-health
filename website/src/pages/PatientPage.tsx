@@ -19,7 +19,7 @@ function PatientPage({ patient, activeDiagnoses, diagnosesHistory }: Props) {
           <HighlightedText text="Patient" />
           <span className="text-3xl font-medium ml-6 text-blue-dark">{patient.name + ' ' + patient.surname}</span>
         </div>
-        <Button text="Disconnect" className="border-red text-red enabled:hover:bg-red enabled:hover:text-white enabled:active:border-red-dark enabled:active:bg-red-dark enabled:active:text-white" />
+        <Button text="Disconnect" negative />
       </div>
 
       <div className="grow mt-14 flex justify-between">
