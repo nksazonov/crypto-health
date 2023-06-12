@@ -1,16 +1,17 @@
 import React from "react";
 
 interface Props {
-  value: string;
+  value: string | number;
+  type? : string;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
   placeholder?: string;
   className?: string;
 }
 
-function Searchbar({ value, onChange, placeholder, className }: Props) {
+function Input({ value, type, onChange, placeholder, className }: Props) {
   return (
     <input
-      type="text"
+      type={type || "text"}
       placeholder={placeholder || "Search..."}
       value={value}
       onChange={onChange}
@@ -19,4 +20,4 @@ function Searchbar({ value, onChange, placeholder, className }: Props) {
   )
 }
 
-export default Searchbar;
+export default Input;
