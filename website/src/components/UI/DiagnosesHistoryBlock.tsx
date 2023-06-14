@@ -16,8 +16,8 @@ function DiagnosesHistoryBlock({diagnosesHistory, onAddClick, className}: Props)
         {onAddClick && <Button text="Add" onClick={onAddClick} className="h-8 border-2 rounded-lg ml-4 !px-2 !py-0 text-lg hover:text-blue" />}
       </div>
       <div className="flex flex-col gap-6">
-        {diagnosesHistory.map(diagnosis => (
-          <DiagnosisBlock diagnosis={diagnosis}/>
+        {diagnosesHistory.map((diagnosis, idx) => (
+          <DiagnosisBlock diagnosis={diagnosis} key={idx} />
         ))}
       </div>
     </div>
