@@ -14,7 +14,7 @@ function PatientGeneralInfoBlock({ patient, onEditClick, className }: Props) {
     <div className={`bg-blue-light px-14 py-10 ${className || ''}`}>
       <div className="flex items-center justify-center mb-16">
         <h2 className="text-4xl text-center">General information</h2>
-        {onEditClick && <Button text="Edit" onClick={onEditClick} className="h-8 border-2 rounded-lg ml-4 px-2 py-0 text-lg hover:text-blue" />}
+        {onEditClick && <Button text="Edit" onClick={onEditClick} className="h-8 border-2 rounded-lg ml-4 !px-2 !py-0 text-lg hover:text-blue" />}
       </div>
       <div className="grid grid-cols-2 grid-rows-6 gap-x-12 gap-y-6 text-3xl">
         <span>Name:</span> <span>{patient.name}</span>
