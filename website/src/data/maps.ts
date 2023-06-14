@@ -9,6 +9,9 @@ export const BloodTypesMap: Map<number, string> = new Map([
   [31, "O+"],
 ]);
 
+export const BloodTypesIDs: number[] = Array.from(BloodTypesMap.keys());
+export const BloodTypesStr: string[] = Array.from(BloodTypesMap.values());
+
 export const DiagnosisMap: Map<number, string> = new Map([
   [0, "Allergies"],
   [1, "Colds and Flu"],
@@ -20,3 +23,6 @@ export const DiagnosisMap: Map<number, string> = new Map([
   [7, "Tonsillitis"],
   [8, "Obesity"],
 ]);
+
+export const DiagnosesIDs: number[] = Array.from(DiagnosisMap.keys());
+export const DiagnosesStr: string[] = Array.from(DiagnosisMap.values());
