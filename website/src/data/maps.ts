@@ -34,3 +34,12 @@ export const StatusesMap: Map<number, string> = new Map([
 
 export const StatusesIDs: number[] = Array.from(StatusesMap.keys());
 export const StatusesStr: string[] = Array.from(StatusesMap.values());
+
+export const AccountRolesMap: Map<number, string> = new Map([
+  [0, "Patient"],
+  [1, "Doctor"],
+  [2, "Admin"],
+]);
+
+export const AccountRolesIDs: number[] = Array.from(AccountRolesMap.keys());
+export const AccountRolesStr: string[] = Array.from(AccountRolesMap.values());
