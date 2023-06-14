@@ -26,3 +26,11 @@ export const DiagnosisMap: Map<number, string> = new Map([
 
 export const DiagnosesIDs: number[] = Array.from(DiagnosisMap.keys());
 export const DiagnosesStr: string[] = Array.from(DiagnosisMap.values());
+
+export const StatusesMap: Map<number, string> = new Map([
+  [0, "Cured"],
+  [1, "Active"],
+]);
+
+export const StatusesIDs: number[] = Array.from(StatusesMap.keys());
+export const StatusesStr: string[] = Array.from(StatusesMap.values());
