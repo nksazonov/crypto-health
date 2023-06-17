@@ -1,3 +1,4 @@
+import { useState } from "react";
 import ActiveDiagnosesBlock from "../components/UI/ActiveDiagnosesBlock";
 import Button from "../components/UI/Button";
 import DiagnosesHistoryBlock from "../components/UI/DiagnosesHistoryBlock";
@@ -5,13 +6,14 @@ import HighlightedText from "../components/UI/HighlightedText";
 import PatientGeneralInfoBlock from "../components/UI/PatientGeneralInfoBlock";
 import { ActiveDiagnoses, DiagnosesHistory, PatientGeneralInfo } from "../data/types";
 
-interface Props {
-  patient: PatientGeneralInfo,
-  activeDiagnoses: ActiveDiagnoses,
-  diagnosesHistory: DiagnosesHistory,
-}
+import {patient as patientMock, activeDiagnoses as activeDiagnosesMock, diagnosesHistory as diagnosesHistoryMock} from '../data/mockup';
 
-function PatientPage({ patient, activeDiagnoses, diagnosesHistory }: Props) {
+function PatientPage() {
+
+  const [patient, setPatient] = useState<PatientGeneralInfo>(patientMock);
+  const [activeDiagnoses, setActiveDiagnoses] = useState<ActiveDiagnoses>(activeDiagnosesMock);
+  const [diagnosesHistory, setDiagnosesHistory] = useState<DiagnosesHistory>(diagnosesHistoryMock);
+
   return (
     <div className="flex flex-col h-5/6 w-100 px-36 pt-14">
       <div className="flex justify-between w-full">
