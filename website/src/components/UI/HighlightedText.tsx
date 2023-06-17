@@ -8,7 +8,7 @@ interface Props {
 
 function HighlightedText({ text, className }: Props) {
   return (
-    <div className={`h-16 bg-blue w-fit text-white px-8 py-3 text-3xl font-mono ${className || ''}`}>
+    <div className={`h-16 bg-blue w-fit h-fit text-white px-8 py-3 text-3xl font-mono ${className || ''}`}>
       {text}
     </div>
   );
