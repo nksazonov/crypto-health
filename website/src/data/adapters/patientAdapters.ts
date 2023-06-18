@@ -41,3 +41,16 @@ export function parseDiagnosesHistory(
     diagnosedBy: result.doctor,
   }));
 }
+
+export function patientGeneralInfo2Struct(
+  patient: PatientGeneralInfo
+): IHealth.PatientStruct {
+  return {
+    name: patient.name,
+    surname: patient.surname,
+    birthDate: patient.birthTimestamp,
+    height: patient.height,
+    weight: patient.weight,
+    bloodType: patient.bloodType,
+  };
+}
