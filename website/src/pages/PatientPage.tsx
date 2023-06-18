@@ -8,7 +8,6 @@ import { ActiveDiagnoses, DiagnosesHistory, PatientGeneralInfo } from "../data/t
 
 import useDApp from "../hooks/useDApp";
 import useCryptoHealth from "../hooks/useCryptoHealth";
-import { parseActiveDiagnoses, parseDiagnosesHistory, parsePatientInfo } from "../data/adapters/patientAdapters";
 
 function PatientPage() {
   const {account, disconnectWallet} = useDApp();
@@ -21,7 +20,7 @@ function PatientPage() {
   useEffect(() => {
       getPatientInfo()
         .then((info) => {
-          setPatient(parsePatientInfo(info!));
+          setPatient(info!);
         })
         .catch((e) =>{
           console.log(e);
@@ -32,7 +31,7 @@ function PatientPage() {
   useEffect(() => {
       getActiveDiagnoses()
         .then((diagnoses) => {
-          setActiveDiagnoses(parseActiveDiagnoses(diagnoses!));
+          setActiveDiagnoses(diagnoses!);
         })
         .catch((e) => {
           console.log(e);
@@ -43,7 +42,7 @@ function PatientPage() {
   useEffect(() => {
       getDiagnosesHistory()
         .then((history) => {
-          setDiagnosesHistory(parseDiagnosesHistory(history!));
+          setDiagnosesHistory(history!);
         })
         .catch((e) => {
           console.log(e);

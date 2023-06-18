@@ -4,6 +4,11 @@ import { ethers } from "ethers";
 import CryptoHealthArtifacts from "../artifacts/CryptoHealth.json";
 import { config } from "../config/config";
 import { CryptoHealth } from "../artifacts/CryptoHealth";
+import {
+  parseActiveDiagnoses,
+  parseDiagnosesHistory,
+  parsePatientInfo,
+} from "../data/adapters/patientAdapters";
 
 export type Role = "Admin" | "Doctor" | "Patient";
 
@@ -51,7 +56,7 @@ export default function useCryptoHealth() {
 
     const CryptoHealth = CryptoHealthContract()!;
     const patientInfo = await CryptoHealth.getPatient(account);
-    return patientInfo;
+    return parsePatientInfo(patientInfo);
   }, [account, CryptoHealthContract]);
 
   const getActiveDiagnoses = React.useCallback(async () => {
@@ -60,7 +65,7 @@ export default function useCryptoHealth() {
 
     const CryptoHealth = CryptoHealthContract()!;
     const activeDiagnoses = await CryptoHealth.getActiveDiagnoses(account);
-    return activeDiagnoses;
+    return parseActiveDiagnoses(activeDiagnoses);
   }, [account, CryptoHealthContract]);
 
   const getDiagnosesHistory = React.useCallback(async () => {
@@ -69,7 +74,7 @@ export default function useCryptoHealth() {
 
     const CryptoHealth = CryptoHealthContract()!;
     const diagnosesHistory = await CryptoHealth.getDiagnosesHistory(account);
-    return diagnosesHistory;
+    return parseDiagnosesHistory(diagnosesHistory);
   }, [account, CryptoHealthContract]);
 
   return {
