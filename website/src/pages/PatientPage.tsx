@@ -18,7 +18,9 @@ function PatientPage() {
   const [diagnosesHistory, setDiagnosesHistory] = useState<DiagnosesHistory | null>(null);
 
   useEffect(() => {
-      getPatientInfo()
+    if (!account) return;
+
+      getPatientInfo(account)
         .then((info) => {
           setPatient(info!);
         })
@@ -29,7 +31,9 @@ function PatientPage() {
   }, [account, getPatientInfo]);
 
   useEffect(() => {
-      getActiveDiagnoses()
+    if (!account) return;
+
+      getActiveDiagnoses(account)
         .then((diagnoses) => {
           setActiveDiagnoses(diagnoses!);
         })
@@ -40,7 +44,9 @@ function PatientPage() {
   }, [account, getActiveDiagnoses]);
 
   useEffect(() => {
-      getDiagnosesHistory()
+    if (!account) return;
+
+      getDiagnosesHistory(account)
         .then((history) => {
           setDiagnosesHistory(history!);
         })
