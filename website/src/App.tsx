@@ -25,7 +25,9 @@ function App() {
   }, []);
 
   useEffect(() => {
-    getRole().then((r) => {
+    if (!account) return;
+
+    getRole(account).then((r) => {
        setRole(r as string)
     });
   }, [account, getRole]);
@@ -33,8 +35,6 @@ function App() {
   const text = account === undefined ? 'Not Connected' : role;
   const address = account === undefined ? '' : shortenAddress(account);
   const addressHref = account === undefined ? '' : `https://mumbai.polygonscan.com/address/${account}`;
-
-  console.log(role);
 
   return (
     <div className='h-screen'>
