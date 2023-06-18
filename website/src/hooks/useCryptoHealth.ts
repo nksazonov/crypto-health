@@ -30,25 +30,68 @@ export default function useCryptoHealth() {
     return CryptoHealth;
   }, [provider]);
 
-  const getRole = React.useCallback(async () => {
-    if (!account) return null;
+  const getRole = React.useCallback(
+    async (address: string) => {
+      if (CryptoHealthContract() === null) return null;
 
-    if (CryptoHealthContract() === null) return null;
+      const CryptoHealth = CryptoHealthContract()!;
 
-    const CryptoHealth = CryptoHealthContract()!;
+      let role;
 
-    let role;
+      if (await CryptoHealth.hasRole(AdminRole, address)) {
+        role = "Admin";
+      } else if (await CryptoHealth.hasRole(DoctorRole, address)) {
+        role = "Doctor";
+      } else {
+        role = "Patient";
+      }
 
-    if (await CryptoHealth.hasRole(AdminRole, account)) {
-      role = "Admin";
-    } else if (await CryptoHealth.hasRole(DoctorRole, account)) {
-      role = "Doctor";
-    } else {
-      role = "Patient";
-    }
+      return role;
+    },
+    [CryptoHealthContract]
+  );
 
-    return role;
-  }, [account, CryptoHealthContract]);
+  const grantRole = React.useCallback(
+    async (role: Role, address: string) => {
+      if (CryptoHealthContract() === null) return null;
+
+      const CryptoHealth = CryptoHealthContract()!;
+      const prevRole = await getRole(address);
+      let tx;
+
+      switch (role) {
+        case "Admin":
+          if (prevRole === "Doctor") {
+            tx = await CryptoHealth.revokeRole(DoctorRole, address);
+            await tx.wait();
+          }
+          tx = await CryptoHealth.grantRole(AdminRole, address);
+          break;
+
+        case "Doctor":
+          if (prevRole === "Admin") {
+            tx = await CryptoHealth.revokeRole(AdminRole, address);
+            await tx.wait();
+          }
+          tx = await CryptoHealth.grantRole(DoctorRole, address);
+          break;
+
+        case "Patient":
+          if (prevRole === "Admin") {
+            tx = await CryptoHealth.revokeRole(AdminRole, address);
+          } else {
+            tx = await CryptoHealth.revokeRole(DoctorRole, address);
+          }
+          break;
+
+        default:
+          throw new Error("Invalid role");
+      }
+
+      await tx.wait();
+    },
+    [getRole, CryptoHealthContract]
+  );
 
   const getPatientInfo = React.useCallback(
     async (patientAddress: string) => {
@@ -146,6 +189,7 @@ export default function useCryptoHealth() {
   return {
     CryptoHealthContract,
     getRole,
+    grantRole,
     getPatientInfo,
     getActiveDiagnoses,
     getDiagnosesHistory,
