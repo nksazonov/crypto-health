@@ -19,27 +19,27 @@ function App() {
   // attempt to connect eagerly on mount
 
   useEffect(() => {
-
     void metaMask.connectEagerly().catch(() => {
       console.debug('Failed to connect eagerly to metamask')
     })
   }, []);
 
   useEffect(() => {
-
     getRole().then((r) => {
        setRole(r as string)
     });
-  }, [getRole]);
+  }, [account, getRole]);
 
   const text = account === undefined ? 'Not Connected' : role;
   const address = account === undefined ? '' : shortenAddress(account);
   const addressHref = account === undefined ? '' : `https://mumbai.polygonscan.com/address/${account}`;
 
+  console.log(role);
+
   return (
     <div className='h-screen'>
         <Header text={text} address={address} addressHref={addressHref} />
-        {account === undefined ? <MainPage /> : role === 'Admin' ? <AdminPage /> : role === 'Doctor' ? <DoctorPage /> : <PatientPage />}
+        {account === undefined || !role ? <MainPage /> : role === 'Admin' ? <AdminPage /> : role === 'Doctor' ? <DoctorPage /> : <PatientPage />}
       </div>
   )
 }
